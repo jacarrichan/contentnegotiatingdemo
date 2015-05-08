@@ -1,0 +1,2 @@
+# contentnegotiatingdemo
+ContentNegotiatingViewResolver  Demo
