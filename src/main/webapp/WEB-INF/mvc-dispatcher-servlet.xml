@@ -1,11 +1,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
@@ -13,13 +15,17 @@
 
 	<mvc:annotation-driven />
 
-	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="order" value="1" />
+		<property name="defaultContentType" value="text/html" />
 		<property name="mediaTypes">
 			<map>
 				<entry key="json" value="application/json" />
 				<entry key="xml" value="application/xml" />
 				<entry key="rss" value="application/rss+xml" />
+				<entry key="html" value="text/html" />
+				<entry key="html" value="text/html;charset=UTF-8" />
 			</map>
 		</property>
 
@@ -27,9 +33,9 @@
 			<list>
 				<!-- JSON View -->
 				<bean
-					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+					<property name="objectMapper" ref="objectMapper" />
 				</bean>
-
 				<!-- RSS View -->
 				<bean class="com.mkyong.common.rss.RssFeedView" />
 
@@ -47,14 +53,41 @@
 				</bean>
 			</list>
 		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<ref local="internalResourceViewResolver"/>
+			</list>
+		</property>
 		<property name="ignoreAcceptHeader" value="true" />
-
 	</bean>
-
+	<bean id="objectMapper"
+		class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+		<property name="serializationInclusion">
+			<array>
+				<util:constant
+					static-field="com.fasterxml.jackson.annotation.JsonInclude$Include.NON_EMPTY" />
+			</array>
+		</property>
+		<property name="featuresToEnable">
+			<array>
+				<util:constant
+					static-field="com.fasterxml.jackson.databind.SerializationFeature.WRAP_ROOT_VALUE" />
+				<util:constant
+					static-field="com.fasterxml.jackson.databind.SerializationFeature.CLOSE_CLOSEABLE" />
+			</array>
+		</property>
+		<property name="featuresToDisable">
+			<array>
+				<util:constant
+					static-field="com.fasterxml.jackson.databind.MapperFeature.USE_ANNOTATIONS" />
+			</array>
+		</property>
+	</bean>
 	<!-- If no extension matched, use JSP view -->
-	<bean
+	<bean id="internalResourceViewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="order" value="2" />
+<!-- 		<property name="order" value="2" /> -->
 		<property name="prefix">
 			<value>/WEB-INF/pages/</value>
 		</property>

@@ -10,9 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView;
 
 import com.mkyong.common.model.Fruit;
-import com.sun.syndication.feed.rss.Channel;
-import com.sun.syndication.feed.rss.Content;
-import com.sun.syndication.feed.rss.Item;
+import com.rometools.rome.feed.rss.Channel;
+import com.rometools.rome.feed.rss.Content;
+import com.rometools.rome.feed.rss.Item;
+
 
 public class RssFeedView extends AbstractRssFeedView {
 
