@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mkyong.common.model.Fruit;
 
@@ -47,5 +48,12 @@ public class ColorController {
 		res.add("ddddd000");
 		res.add(null);
 		model.addAttribute(res);
+	}
+	
+	@RequestMapping(value = "/html", method = RequestMethod.GET)
+	@ResponseBody
+	public String  html(Fruit  fruit){
+		System.out.println(fruit.getName());
+		return  "<HTML><p style='background-color:red'>................sj....."+fruit.getName()+"...........</p></HTML>";
 	}
 }
